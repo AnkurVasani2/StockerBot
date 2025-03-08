@@ -471,7 +471,7 @@ async def send_daily_predictions(app: Application):
 async def daily_job(app: Application):
     while True:
         now = datetime.now()
-        next_run = now.replace(hour=2, minute=51, second=00, microsecond=0)
+        next_run = now.replace(hour=2, minute=53, second=00, microsecond=0)
         if next_run <= now:
             next_run += timedelta(days=1)
         delay = (next_run - now).total_seconds()
