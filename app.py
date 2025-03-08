@@ -19,12 +19,17 @@ from urllib.parse import quote_plus
 from groq import Groq
 from dotenv import load_dotenv
 import os
+import logging
+
+# Set up logging for debugging scheduler and job execution
+logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
 telegram_token = os.environ.get('TELEGRAM_TOKEN')
 groq_api = os.environ.get('GROQ_API')
 rapid_key = os.environ.get('RAPID_KEY')
+
 # --- MongoDB Setup ---
 password = quote_plus("Vasani@12345")
 MONGO_URI = f"mongodb+srv://ankurcourses:{password}@stock.jnaw2.mongodb.net/"
@@ -118,8 +123,6 @@ def get_stock_details(stock_name: str) -> dict:
     }
     return details
 
-
-
 def get_prediction_for_stock(data: dict) -> str:
     client = Groq(api_key=groq_api)
     messages = [
@@ -137,7 +140,6 @@ def get_prediction_for_stock(data: dict) -> str:
         stop=None,
     )
     return completion.choices[0].message.content or "No prediction"
-
 
 # ----------------------------
 # Cancel & Error Handlers (Define early!)
@@ -464,19 +466,9 @@ async def send_daily_predictions(app: Application):
             prediction = await asyncio.to_thread(get_prediction_for_stock, data_to_send)
             predictions.append(f"{stock_code}: {prediction}")
         if predictions:
-            print("Got data: ",data_to_send)
+            logging.info("Sending daily predictions to user_id %s", user_id)
             message = "📊 <b>Daily Prediction for your Stocks:</b>\n" + "\n".join(predictions)
             await app.bot.send_message(chat_id=user_id, text=message, parse_mode="HTML")
-
-async def daily_job(app: Application):
-    while True:
-        now = datetime.now()
-        next_run = now.replace(hour=2, minute=53, second=00, microsecond=0)
-        if next_run <= now:
-            next_run += timedelta(days=1)
-        delay = (next_run - now).total_seconds()
-        await asyncio.sleep(delay)
-        await send_daily_predictions(app)
 
 async def main():
     app = Application.builder().token(telegram_token).build()
@@ -499,8 +491,11 @@ async def main():
         BotCommand("cancel", "Cancel the current operation ❌")
     ])
     
-    # Schedule the daily prediction job at 9 PM
-    asyncio.create_task(daily_job(app))
+    # Set up APScheduler to run the daily prediction job every day at 09:00 local time.
+    from apscheduler.schedulers.asyncio import AsyncIOScheduler
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(send_daily_predictions, 'cron', hour=3, minute=3, args=[app])
+    scheduler.start()
     
     # Register the error handler
     app.add_error_handler(error_handler)
