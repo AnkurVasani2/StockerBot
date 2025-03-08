@@ -493,9 +493,11 @@ async def main():
     
     # Set up APScheduler to run the daily prediction job every day at 09:00 local time.
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(send_daily_predictions, 'cron', hour=21, minute=42, args=[app])
+    # Set the scheduler timezone to Asia/Kolkata (IST)
+    scheduler = AsyncIOScheduler(timezone="Asia/Kolkata")
+    scheduler.add_job(send_daily_predictions, 'cron', hour=3, minute=16, args=[app], timezone="Asia/Kolkata")
     scheduler.start()
+
     
     # Register the error handler
     app.add_error_handler(error_handler)
