@@ -1,6 +1,6 @@
 # StockerBot 🚀
 
-![StockerBot Logo](https://github.com/ankurvasani2/stockerbot/logo.jpg?raw=true)
+![StockerBot Logo](https://github.com/AnkurVasani2/StockerBot/blob/master/logo.jpg?raw=true)
 
 Welcome to **StockerBot** – a smart Telegram bot designed to help you manage your stock portfolio, receive real-time predictions, and stay updated with the latest market news using advanced predictive analytics and AI.
 
