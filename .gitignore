@@ -1,3 +1,4 @@
 .env
 .venv
 /test1.py
+/StockerBot.pem
