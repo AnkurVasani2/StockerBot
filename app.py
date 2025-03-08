@@ -495,7 +495,7 @@ async def main():
     from apscheduler.schedulers.asyncio import AsyncIOScheduler
     # Set the scheduler timezone to Asia/Kolkata (IST)
     scheduler = AsyncIOScheduler(timezone="Asia/Kolkata")
-    scheduler.add_job(send_daily_predictions, 'cron', hour=3, minute=16, args=[app], timezone="Asia/Kolkata")
+    scheduler.add_job(send_daily_predictions, 'cron', hour=9, minute=0, args=[app], timezone="Asia/Kolkata")
     scheduler.start()
 
     
