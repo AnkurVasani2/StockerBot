@@ -383,7 +383,7 @@ async def schedule_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = query.data
     if data == "SCHEDULE_ON":
         value = 1
-        message = "✅ Notifications turned ON."
+        message = "✅ Notifications turned ON.\n You will be notified with the Daily predictions every day at 09:00 AM"
     elif data == "SCHEDULE_OFF":
         value = 0
         message = "✅ Notifications turned OFF."
